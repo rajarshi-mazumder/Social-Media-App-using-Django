@@ -1,0 +1,46 @@
+* {
+    font-family: 'Source Sans Pro', sans-serif;
+    overflow: auto;
+}
+
+html {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    overflow: auto;
+}
+
+body {
+    width: 100%;
+    height: auto;
+}
+
+.popup-container {
+    background-color: rgba(0, 0, 0, 0.3);
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+
+    align-items: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+
+}
+
+.popup-container.show {
+    pointer-events: auto;
+    opacity: 1;
+}
+
+.popup {
+    border-radius: 10px;
+    background-color: #fff;
+    padding: 30px 50px;
+    width: 600px;
+    max-width: 100%;
+}
