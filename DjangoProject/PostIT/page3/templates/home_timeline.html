@@ -46,7 +46,7 @@ Page3 Homepage
                                             {% endfor %}
                                             {{post.author}} | {{ post.post_date }}   
                                         </section>
-                                        <a class="post-title" onclick="storeScroll()" href="{% url 'post-page' post.pk %}"> </a>|
+                                        <a class="post-title" onclick="storeScroll()" href="{% url 'post-page' post.pk %}">{{ post.title }} </a>|
                                         <a class="post-category" href="{% url 'posts-by-category' post.tags %}">{{ post.category}}</a> <small>
                                             {{post.id}}</small>
                                         <br />
