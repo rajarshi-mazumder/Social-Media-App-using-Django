@@ -40,17 +40,8 @@
             <div class="navbar-contents">
                 <a class="home" href="{% url 'home-page'%}">Home</i></a>
                 {% if user.is_authenticated %}
-                <div class="add-post">
-                    <i class="fa-solid fa-circle-plus fa-3x"></i>
-                    <div class="submenu">
-                        <a class="create-post" href="{% url 'add-post' %}">Create Post</a>
-                        <a href="{% url 'add-image-post' %}"><i class="fa-regular fa-image "></i></a>
-                        <a href="{% url 'add-video-post' %}"><i class="fa-solid fa-video "></i></a> 
-                    </div>
-                </div>
                 
-            
-
+                
                 {% if user.profile.id %}
 
 
@@ -76,6 +67,28 @@
 
                 <a href="{% url 'edit-profile' %}"><i class="fa-solid fa-gear "></i></a>
             </div>
+
+            {% if user.is_authenticated %}
+            <div class="add-post">
+                <i class="fa-solid fa-circle-plus fa-3x"></i>
+                <div class="addpost-submenu">
+                    <div class="submenu-item">
+                        <a class="create-post" href="{% url 'add-post' %}">Text Post</a>
+                        <a class="create-post" href="{% url 'add-post' %}"><i class="fa-solid fa-feather"></i></a>
+                    </div>
+
+                    <div class="submenu-item">                        
+                        <a href="{% url 'add-image-post' %}">Image Post</a>
+                        <a href="{% url 'add-image-post' %}"><i class="fa-regular fa-image "></i></a>
+                    </div>
+
+                    <div class="submenu-item">  
+                        <a href="{% url 'add-video-post' %}">Video Post</a> 
+                        <a href="{% url 'add-video-post' %}"><i class="fa-solid fa-video "></i></a> 
+                    </div>
+                </div>
+            </div>
+            {%endif%}
         </div>
 
         {% block content %}

@@ -11,7 +11,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, JsonResponse, HttpResponseNotAllowed
 from django.views.generic import ListView, DetailView
 from matplotlib.style import context
-from . models import Post, Replies, ImageFiles
+from . models import Post, Profile, Replies, ImageFiles
 from . forms import EditPostForm, EditVideoPostForm, ImageForm, PostForm, PostImageForm, PostVideoForm, EditImagePostForm
 from django.http import HttpResponseRedirect
 from django.urls import reverse, reverse_lazy
@@ -65,9 +65,11 @@ def home_timeline(request, post_id=None):
     except:
         last_viewed = ""
     image_list = ImageFiles.objects.all()
+    profiles= Profile.objects.all()
     has_images_to_show = False
     try:
         post = Post.objects.get(id=post_id)
+        profile= Post.objects.get(user= post['author'])
         context = {
             'object_list': object_list,
             'image_list': image_list,
@@ -77,6 +79,7 @@ def home_timeline(request, post_id=None):
             'objects': objects,
             'last_viewed': last_viewed,
             'has_images_to_show': has_images_to_show,
+            'profile': profile,
         }
     except:
         context = {
@@ -85,6 +88,7 @@ def home_timeline(request, post_id=None):
             'objects': objects,
             'last_viewed': last_viewed,
             'has_images_to_show': has_images_to_show,
+            'profiles': profiles,
         }
     return render(request, 'home_timeline.html', context)
 

@@ -9,117 +9,120 @@ Page3 Homepage
     <div id="myid">Replace me</div>
 
     <body onpageshow="myfunction()" onload="javascript:playPauseVideo()">
-        <h1>Page3 Homepage</h1><br />
-        <div class="test">
-            ghjhj
-        </div>
-        Logged in as {{ user.username }}
-
-        LAST VIEWED: {{ last_viewed }}<br />
-
-        <!--  -->
-        <button id="open-popup">Click to open</button>
-
-
-
-
-
-
-        <!--  -->
-        <ul>
-
-
-
-            {% if objects.has_next %}
-            <a class="infinite-more-link" href="?page={{objects.next_page_number}}">Next</a>
-
-            {% endif %}
-
-
-            <div class="infinite-container">
-                {% for post in objects %}
-                {% if not post.is_reply %}
-                <div class="infinite-item">
-                    <div id="show-popup" value="{{ post.id }}">
-                        <li class="post">
-                            <div><a class="post-title" onclick="storeScroll()" href="{% url 'post-page' post.pk %}">{{ post.title }} </a>|
-                                {{post.author}} | {{ post.post_date }}
-                                |
-                                <a class="post-category" href="{% url 'posts-by-category' post.tags %}">{{ post.category}}</a> <small>
-                                    {{post.id}}</small>
-                                <br />
-                                {% if user.is_authenticated %}
-                                {% if user.id == post.author.id %}
-                                {% if post.has_video %}
-                                <a href="{% url 'edit-video-post' post.pk %}">Edit</a>
-                                {% elif post.has_images %}
-                                <a href="{% url 'edit-image-post' post.pk %}">Edit</a>
-                                {% else %}
-                                <a href="{% url 'edit-post' post.pk %}">Edit</a>
-                                {% endif %}
-
-                                <a href="{% url 'delete-post' post.pk %}">Delete</a>
-                                <!-- <button id="like-button" value="{{ post.pk }}">Like</button> -->
-                                {% endif %}
-                                {% endif %}
-                                <hr>
-                                <div class="post-body">{{ post.body|safe}}</div>
-                                
-                                {% if post.image1 %}
-                                <img src="{{ post.image1.url}}" width="500">
-                                {% endif %}
-                                <br />
-
-                                <div class="images">
-                                    {% if post.has_images %}
-                                    {% for image in image_list %}
-                                    {% if image.post.id == post.id %}
-                                    <img src="{{ image.image.url}}" width="500">
-                                    {% endif %}
-                                    {% endfor %}
-                                    {{ post.imagefiles}}
-                                    {% endif %}
-                                </div>
-                                {% if post.video %}
-                                <video width="500" controls autoplay>
-                                    <source src="{{post.video.url}}" type="video/mp4">
-                                </video>
-
-                                <!-- <a href="{{post.video.url}}">Link</a> -->
-
-                                {% endif %}
-                                <br />
-
-                                <!-- {{ post.likes.count }} likes
-                {{ post.liked_by }} -->
-
-
-
-                                {% if user.is_authenticated %}
-
-                                <!-- <span id="like_count" type="hidden">{{ post.like_count}}</span> -->
-                                <button id="like-button" class="like-button" name="{{ post.like_count }}"
-                                    value="{{ post.id }}">LIKED BY
-                                    {{post.like_count}}</button>
-
-                                <a href="{% url 'add-reply' post.pk %}">Text Reply</a> <a
-                                    href="{% url 'add-image-reply' post.pk %}">Image Reply</a> <a
-                                    href="{% url 'add-video-reply' post.pk %}">Video Reply</a>
-
-                                {% endif %}
-
-
-                            </div>
-                        </li>
-                    </div>
+        <div class="page-contents">
+            <div class="sidebar">
+                <h1>Page3 Homepage</h1><br />
+                <div class="test">
                 </div>
-                <br /><br />
-                {% endif %}
-                {% endfor %}
+                Logged in as {{ user.username }}
+
+                LAST VIEWED: {{ last_viewed }}<br />
             </div>
+            <div class="posts-timeline">
+                <!--  -->
+                <button id="open-popup">Click to open</button>
+                <!--  -->
+                <ul>
+                    {% if objects.has_next %}
+                    <a class="infinite-more-link" href="?page={{objects.next_page_number}}">Next</a>
 
-        </ul>
+                    {% endif %}
 
+
+                    <div class="infinite-container">
+                        {% for post in objects %}
+                        {% if not post.is_reply %}
+                        <div class="infinite-item">
+                            <div id="show-popup" value="{{ post.id }}">
+                                <li class="post">
+                                    <div>
+                                        <section class="post-top-part">
+                                            {% for p in profiles %}
+                                                {%if p.user == post.author%}
+                                                <div class="profile-pic">
+                                                    <img  src="media/{{p.profile_pic}}" width="500">
+                                                </div>
+                                                {%endif%}
+                                            {% endfor %}
+                                            {{post.author}} | {{ post.post_date }}   
+                                        </section>
+                                        <a class="post-title" onclick="storeScroll()" href="{% url 'post-page' post.pk %}">{{ post.title }} </a>|
+                                        <a class="post-category" href="{% url 'posts-by-category' post.tags %}">{{ post.category}}</a> <small>
+                                            {{post.id}}</small>
+                                        <br />
+                                        {% if user.is_authenticated %}
+                                        {% if user.id == post.author.id %}
+                                        {% if post.has_video %}
+                                        <a href="{% url 'edit-video-post' post.pk %}">Edit</a>
+                                        {% elif post.has_images %}
+                                        <a href="{% url 'edit-image-post' post.pk %}">Edit</a>
+                                        {% else %}
+                                        <a href="{% url 'edit-post' post.pk %}">Edit</a>
+                                        {% endif %}
+
+                                        <a href="{% url 'delete-post' post.pk %}">Delete</a>
+                                        <!-- <button id="like-button" value="{{ post.pk }}">Like</button> -->
+                                        {% endif %}
+                                        {% endif %}
+                                        <hr>
+                                        <div class="post-body">{{ post.body|safe}}</div>
+                                        
+                                        {% if post.image1 %}
+                                        <img src="{{ post.image1.url}}" width="500">
+                                        {% endif %}
+                                        <br />
+
+                                        <div class="images">
+                                            {% if post.has_images %}
+                                            {% for image in image_list %}
+                                            {% if image.post.id == post.id %}
+                                            <img src="{{ image.image.url}}" width="500">
+                                            {% endif %}
+                                            {% endfor %}
+                                            {{ post.imagefiles}}
+                                            {% endif %}
+                                        </div>
+                                        {% if post.video %}
+                                        <video class="post-video" width="500" controls autoplay>
+                                            <source src="{{post.video.url}}" type="video/mp4">
+                                        </video>
+
+                                        <!-- <a href="{{post.video.url}}">Link</a> -->
+
+                                        {% endif %}
+                                        <br />
+
+                                        <!-- {{ post.likes.count }} likes
+                        {{ post.liked_by }} -->
+
+
+
+                                        {% if user.is_authenticated %}
+
+                                        <!-- <span id="like_count" type="hidden">{{ post.like_count}}</span> -->
+                                        <button id="like-button" class="like-button" name="{{ post.like_count }}"
+                                            value="{{ post.id }}">LIKED BY
+                                            {{post.like_count}}</button>
+
+                                        <a href="{% url 'add-reply' post.pk %}">Text Reply</a> <a
+                                            href="{% url 'add-image-reply' post.pk %}">Image Reply</a> <a
+                                            href="{% url 'add-video-reply' post.pk %}">Video Reply</a>
+
+                                        {% endif %}
+
+
+                                    </div>
+                                </li>
+                            </div>
+                        </div>
+                        <br /><br />
+                        {% endif %}
+                        {% endfor %}
+                    </div>
+
+                </ul>
+            </div>
+        </div>
         <br />
         <center>
             <div onshow="getRadioButtons()" class="popup-container" id="popup-container">

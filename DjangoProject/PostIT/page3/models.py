@@ -66,7 +66,7 @@ class Post(models.Model):
         super(Post, self).save(*args, **kwargs)
 
     def __str__(self):
-        return self.title + ' | ' + str(self.author) + '| ' + str(self.id)
+        return str(self.title) + ' | ' + str(self.author) + '| ' + str(self.id)
 
     def get_absolute_url(self):
         return reverse('post-page', args=(str(self.post_id)))

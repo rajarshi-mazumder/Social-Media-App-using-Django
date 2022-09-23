@@ -48,29 +48,32 @@ body{
 }
 .add-post {
     margin-right: auto;
-    display: flex;
-    justify-content: center;
     color: var(--grey_color);
+    position: fixed;
+    overflow: hidden;
+    top: 0px;
+    left: 100px;
 }
 .fa-circle-plus{
    
     padding-bottom: 5px;
     font-style: normal;
-    margin: auto 0;
+    position: relative;
+    top: -5px;
+    /* margin: auto 0; */
 }
-.add-post .submenu{
-    /* display: none; */
-    height: 80%;
+.addpost-submenu{
+    display: none;
+}
+.add-post:hover .addpost-submenu{
     display: flex;
+    flex-direction: column;
     justify-content: center;
-    align-items: center;
-    margin: auto 0;
+    background-color: var(--post_bg_color);
+    margin-left: 10px;
+    padding: 10px 5px;
     border: 1px solid var(--grey_color);
-    border-radius: 5px;
-    
-}
-.add-post:hover .submenu{
-    border: 2px solid var(--grey_color);
+    border-radius: 10px;
 }
 
 .add-post a, i{
@@ -85,10 +88,11 @@ body{
 .submenu{
     position: relative;
 }
-.add-post .submenu .create-post{
-    font-size:x-large;
-}
 
+.addpost-submenu .submenu-item{
+    display: flex;
+    justify-content: space-between;
+}
 .submenu a:hover, i:hover{
     color: var(--primary_color);
 }
@@ -116,7 +120,9 @@ body{
     padding: 0 10px;
     font-size: x-large;
 }
-
+.navbar-contents .home{
+    margin-right: auto;
+}
 .navbar-contents .home:hover{
     color: var(--primary_color);
 }
@@ -146,11 +152,12 @@ body{
 .post{
     text-align: start;
     background-color: var(--post_bg_color);
-    max-width: 700px;
+    max-width: 500px;
     margin:0 auto;
     padding: 10px;
     border: 1px var(--grey_color) solid;
     border-radius: 10px;
+    margin-bottom: 10px;
 }
 .post-body{
     padding: 10px;
@@ -190,4 +197,53 @@ p::-webkit-scrollbar{
     color: black;
     padding: 2px 5px; 
     border-radius: 2px;
+}
+
+.post-video{
+    width: 100%;
+    margin: 0 auto;
+    padding: 5px;
+}
+.profile-pic img{
+    display: inline;
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 50%;
+    overflow: hidden;
+    
+}
+.profile-pic{
+    padding: 10px;
+}
+.post-top-part{
+    display: flex;
+    align-items: center;
+    
+}
+.page-contents{
+    /* position: absolute; */
+    display: flex;
+    max-width: 800px;
+    margin: 0 auto;
+
+}
+.sidebar{
+    
+    display: flex;
+    flex-direction: column;
+    background-color: var(--post_bg_color);
+    height: 600px;
+    width: 300px;
+    overflow: hidden;
+    padding: 10px;
+    border: 1px solid var(--grey_color);
+    border-radius: 10px;
+    position: fixed;
+    top: 90px;
+    left: 1100px;
+    z-index: 990;
+}
+h1::-webkit-scrollbar{
+    display: none;
 }
