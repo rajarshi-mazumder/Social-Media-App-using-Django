@@ -11,12 +11,21 @@ Page3 Homepage
     <body onpageshow="myfunction()" onload="javascript:playPauseVideo()">
         <div class="page-contents">
             <div class="sidebar">
-                <h1>Page3 Homepage</h1><br />
-                <div class="test">
-                </div>
                 Logged in as {{ user.username }}
 
                 LAST VIEWED: {{ last_viewed }}<br />
+                <hr>
+                <br>
+                <h2>What's happening</h2><br />
+                <div class="article">
+                    <div class="article-category">News</div>
+                    <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Sit, numquam?</p>
+                </div>
+                <div class="article">
+                    <div class="article-category">News</div>
+                    <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Sit, numquam?</p>
+                </div>
+                
             </div>
             <div class="posts-timeline">
                 <!--  -->
@@ -36,6 +45,11 @@ Page3 Homepage
                             <div id="show-popup" value="{{ post.id }}">
                                 <li class="post">
                                     <div>
+                                        <div class="post-category-section">
+                                            <i class="fa-solid fa-earth-oceania"></i>
+                                            <a class="post-category" href="{% url 'posts-by-category' post.tags %}">{{ post.category}}</a> <small>
+                                                {{post.id}}</small>
+                                        </div>
                                         <section class="post-top-part">
                                             {% for p in profiles %}
                                                 {%if p.user == post.author%}
@@ -44,12 +58,11 @@ Page3 Homepage
                                                 </div>
                                                 {%endif%}
                                             {% endfor %}
-                                            {{post.author}} | {{ post.post_date }}   
+                                            <span class="author-date">{{post.author}} <span class="date"> {{ post.post_date }} </span>  </span>
                                         </section>
-                                        <a class="post-title" onclick="storeScroll()" href="{% url 'post-page' post.pk %}"> </a>|
-                                        <a class="post-category" href="{% url 'posts-by-category' post.tags %}">{{ post.category}}</a> <small>
-                                            {{post.id}}</small>
-                                        <br />
+                                        <a class="post-title" onclick="storeScroll()" href="{% url 'post-page' post.pk %}"> </a>
+                                        
+                                        
                                         {% if user.is_authenticated %}
                                         {% if user.id == post.author.id %}
                                         {% if post.has_video %}
@@ -70,7 +83,7 @@ Page3 Homepage
                                         {% if post.image1 %}
                                         <img src="{{ post.image1.url}}" width="500">
                                         {% endif %}
-                                        <br />
+                                        
 
                                         <div class="images">
                                             {% if post.has_images %}
@@ -101,7 +114,7 @@ Page3 Homepage
 
                                         <!-- <span id="like_count" type="hidden">{{ post.like_count}}</span> -->
                                         <button id="like-button" class="like-button" name="{{ post.like_count }}"
-                                            value="{{ post.id }}">LIKED BY
+                                            value="{{ post.id }}"><i class="fa-solid fa-heart"></i>
                                             {{post.like_count}}</button>
 
                                         <a href="{% url 'add-reply' post.pk %}">Text Reply</a> <a
