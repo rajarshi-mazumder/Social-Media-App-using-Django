@@ -1,0 +1,355 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+Page3 Homepage
+{% endblock title %}
+
+{% block content %}
+
+<div class="main-body">
+    <div id="myid">Replace me</div>
+
+
+
+    <body onload="javascript:playPauseVideo()">
+
+        <div class="page-contents">
+            <div class="sidebar">
+                Logged in as {{ user.username }}
+                {%for game_profile in game_profiles%}
+                    {%if game_profile.user == user%}
+                    <div class="gamer_profile">
+                        <p>{{game_profile.game}}</p>
+                        <p>{{game_profile.rank}}</p>
+                        <p>Location: {{game_profile.server}}</p>
+                    </div>
+                    <div class="matchmaking">
+                        <a href="{% url 'matchmaking-home' user%}">Matchmaking</a>
+                    </div>
+                    {%endif%}
+                {%endfor%}
+                {% if user.is_authenticated %}
+                <a href="{% url 'create-gamer-profile' user.username %}">Gamer Profile</a>
+                {%endif%}
+                
+                <hr>
+                <br>
+                <h2>What's happening</h2><br />
+                <div class="article">
+                    <div class="article-category">News</div>
+                    <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Sit, numquam?</p>
+                </div>
+                <div class="article">
+                    <div class="article-category">News</div>
+                    <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Sit, numquam?</p>
+                </div>
+
+            </div>
+
+            <div class="posts-timeline">
+                <ul>
+                    {% if objects.has_next %}
+                    <a class="infinite-more-link" href="?page={{objects.next_page_number}}"></a>
+
+                    {% endif %}
+
+
+                    <div class="infinite-container" id="myDIV">
+                        {% for post in objects %}
+                        {% if not post.is_reply %}
+                        <div class="infinite-item">
+                            <div value="{{ post.id }}">
+                                <li class="post">
+                                    <div>
+                                        <div class="post-category-section">
+                                            <i class="fa-solid fa-earth-oceania"></i>
+                                            <a class="post-category" href="{% url 'posts-by-category' post.tags %}">
+                                                {{post.category}}</a> <small>
+                                                {{post.id}}</small>
+                                        </div>
+                                        <section class="post-top-part">
+                                            {% for p in profiles %}
+                                            {%if p.user == post.author%}
+                                            <div class="profile-pic">
+                                                <a href="{%url 'posts-by-user' post.author%}"><img src="media/{{p.profile_pic}}" width="500"></a>
+                                            </div>
+                                            {%endif%}
+                                            {% endfor %}
+                                            <span class="author-date">{{post.author}} <span class="date">
+                                                    {{post.post_date}}
+                                                </span> </span>
+                                        </section>
+                                        <a class="post-title" onclick="storeScroll()"
+                                            href="{% url 'post-page' post.pk %}">
+                                            {{post.title}}</a>
+
+
+                                        {% if user.is_authenticated %}
+                                        {% if user.id == post.author.id %}
+                                        {% if post.has_video %}
+                                        <a href="{% url 'edit-video-post' post.pk %}">Edit</a>
+                                        {% elif post.has_images %}
+                                        <a href="{% url 'edit-image-post' post.pk %}">Edit</a>
+                                        {% else %}
+                                        <a href="{% url 'edit-post' post.pk %}">Edit</a>
+                                        {% endif %}
+
+                                        <a href="{% url 'delete-post' post.pk %}">Delete</a>
+                                        <!-- <button id="like-button" value="{{ post.pk }}">Like</button> -->
+                                        {% endif %}
+                                        {% endif %}
+                                        <hr>
+                                        <div id="show-popup" value="{{ post.id }}" class="post-body">
+                                            {{ post.body|safe}}
+                                        </div>
+
+                                        {% if post.image1 %}
+                                        <img src="{{ post.image1.url}}" width="500">
+                                        {% endif %}
+
+
+                                        <div class="images">
+                                            {% if post.has_images %}
+                                            {% for image in image_list %}
+                                            {% if image.post.id == post.id %}
+                                            <img src="{{ image.image.url}}">
+                                            {% endif %}
+                                            {% endfor %}
+                                            {{ post.imagefiles}}
+                                            {% endif %}
+                                        </div>
+                                        {% if post.video %}
+                                        <video class="post-video" width="500" controls autoplay>
+                                            <source src="{{post.video.url}}" type="video/mp4">
+                                        </video>
+
+                                        <!-- <a href="{{post.video.url}}">Link</a> -->
+
+                                        {% endif %}
+                                        <br />
+
+                                        <!-- {{ post.likes.count }} likes
+                                {{ post.liked_by }} -->
+
+
+
+                                        {% if user.is_authenticated %}
+
+                                        <!-- <span id="like_count" type="hidden">{{ post.like_count}}</span> -->
+                                        <button id="like-button" class="like-button" name="{{ post.like_count }}"
+                                            value="{{ post.id }}"><i class="fa-solid fa-heart"></i>
+                                            {{post.like_count}}</button>
+
+                                        <a href="{% url 'add-reply' post.pk %}">Text Reply</a> <a
+                                            href="{% url 'add-image-reply' post.pk %}">Image Reply</a> <a
+                                            href="{% url 'add-video-reply' post.pk %}">Video Reply</a>
+                                        <a href="{% url 'replies-page' post.pk %}">Reply</a>
+                                        <a href="{% url 'ajax-replies' post.pk %}">AJAX Reply</a>
+                                        <a href="{% url 'django_image_and_file_upload_ajax' post.pk %}">AJAX Upload
+                                            images</a>
+
+                                        {% endif %}
+
+
+                                    </div>
+                                </li>
+                            </div>
+                        </div>
+                        
+                        {% endif %}
+                        {% endfor %}
+                    </div>
+
+                </ul>
+            </div>
+        </div>
+        <br />
+
+
+
+
+    </body>
+</div>
+<script src="{% static 'PostIT/js/jquery.waypoints.min.js' %}"></script>
+<script src="{% static 'PostIT/js/infinite.min.js'%}"></script>
+
+<script>
+
+    function updateText(btn, no_of_likes) {
+        console.log(btn)
+        btn.text("LIKED BY" + " " + no_of_likes)
+    }
+    $(document).on('click', '#like-button', function (e) {
+        e.preventDefault();
+
+        var this_ = $(this)
+        postid = this_.attr("value").valueOf()
+
+        // var somevar = this_.attr()
+        $.ajax({
+            type: 'POST',
+            url: '{% url "like" %}',
+            data: {
+                postid: postid,
+                // postid: $('#like-button').val(),
+                action: 'post',
+                // postid: '{{ post.pk }}',
+            },
+            success: function (json) {
+
+                // this.getElementById("like-button").innerHTML = json['result']
+                // document.getElementsByTagName('{{post.id}}').innerHTML = json['result']
+
+                // document.getElementById("like_count").innerHTML = json['result'];
+                // no_of_likes = this_.attr("name").valueOf();
+                no_of_likes = json['result'];
+                console.log(json)
+                updateText(this_, no_of_likes)
+            },
+            error: function (xhr, errmsg, err) {
+
+            }
+        });
+    })
+
+    function playPauseVideo() {
+        let videos = document.querySelectorAll("video");
+        console.log("VIDEOS" + videos)
+        videos.forEach((video) => {
+            // We can only control playback without insteraction if video is mute
+            video.muted = true;
+            // Play is a promise so we need to check we have it
+            let playPromise = video.play();
+            if (playPromise !== undefined) {
+                playPromise.then((_) => {
+                    let observer = new IntersectionObserver(
+                        (entries) => {
+                            entries.forEach((entry) => {
+                                if (
+                                    entry.intersectionRatio !== 1 &&
+                                    !video.paused
+                                ) {
+                                    video.pause();
+                                } else if (video.paused) {
+                                    video.play();
+                                }
+                            });
+                        },
+                        { threshold: 0.9 }
+                    );
+                    observer.observe(video);
+                });
+            }
+        });
+    }
+
+
+</script>
+
+
+
+<script>
+
+
+    var infinite = new Waypoint.Infinite({
+        element: $('.infinite-container')[0],
+        offset: 'bottom-in-view',
+        onBeforePageLoad: function () {
+            console.log("Objects loaded before load" + '{{objects}}')
+        },
+        onAfterPageLoad: function () {
+            console.log("Objects loaded after load" + '{{objects.has_previous}}')
+        }
+
+    })
+    function updateText(btn, no_of_likes) {
+        btn.text("LIKED BY" + " " + no_of_likes)
+    }
+    function myfunction(e) {
+        e.preventDefault()
+        let allLikes = document.getElementsByClassName('like-button');
+
+
+        for (let i = 0; i < allLikes.length; i++) {
+            let attributeValue = allLikes[i].getAttribute('value');
+
+
+            $.ajax({
+                type: 'POST',
+                url: '{% url "set_likes" %}',
+                data: {
+                    postid: attributeValue,
+                    // postid: $('#like-button').val(),
+                    action: 'post',
+                    // postid: '{{ post.pk }}',
+                },
+                success: function (json) {
+
+
+                    // this.getElementById("like-button").innerHTML = json['result']
+                    // document.getElementsByTagName('{{post.id}}').innerHTML = json['result']
+
+                    // document.getElementById("like_count").innerHTML = json['result'];
+                    // no_of_likes = this_.attr("name").valueOf();
+
+
+                    no_of_likes = json['result'];
+                    //console.log(json)
+                    //updateText(allLikes[i], no_of_likes)
+                    allLikes[i].innerHTML = "LIKED BY" + " " + no_of_likes
+                    console.log("AJAX LIKES UPDATE REQUEST")
+                },
+                error: function (response) {
+
+                }
+            });
+
+
+        }
+        console.log(allLikes)
+
+    }
+
+
+    function storeScroll() {
+
+        scrollPos = window.pageYOffset
+        localStorage.setItem("scrollPosition", scrollPos);
+        localStorage.setItem("loadedPosts", '{{objects}}')
+        console.log(localStorage.getItem("loadedPosts"))
+        console.log(localStorage.getItem("scrollPosition"))
+        console.log("Scroll position Y" + scrollPos)
+    }
+
+    window.addEventListener("pageshow", scrollToPos);
+
+    function scrollToPos(e) {
+        //e.preventDefault()
+        const element = document.getElementById("myDIV");
+        //alert("Attempt Scroll" + element)
+        //element.scrollLeft = 5000;
+        //element.scrollTop = 3000;
+        console.log(localStorage.getItem("scrollPosition"))
+        //if ('scrollRestoration' in window.history) {
+        //  console.log(window.history.scrollRestoration)
+        window.history.scrollRestoration = 'manual'
+        //}
+        setTimeout(function () { console.log("gjhkljhvjkl") })
+
+        //alert("Attempt Scroll")
+        //$("html, body").animate({ scrollTop: parseInt(localStorage.getItem("scrollPosition")) }, 2000);
+        //setTimeout(function () { window.scrollTo(0, parseInt(localStorage.getItem("scrollPosition"))) }, 200)
+        //setTimeout(function () { $("html, body").animate({ scrollTop: parseInt(localStorage.getItem("scrollPosition")) }, 2000); }, 200)
+        //$("html, body").animate({ scrollTop: 5000 }, 2000);
+        //window.scroll(0, parseInt(localStorage.getItem("scrollPosition")))
+        //window.scrollTo(0, parseInt(localStorage.getItem("scrollPosition")));
+
+
+    }
+
+
+</script>
+
+
+
+{% endblock content %}

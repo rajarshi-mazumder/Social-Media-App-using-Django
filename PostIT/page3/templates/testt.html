@@ -1,0 +1,191 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+Page3 - Add reply
+{% endblock title %}
+
+{% block content %}
+{% load crispy_forms_tags %}
+
+{% if parents_arr %}
+{% for parent in parents_arr %}
+{{ parent.author }}<br />
+{{ parent.body|safe }}<br /><br />
+{% endfor %}
+{% endif %}
+
+<br /><br /><br />
+
+
+{% if user.is_authenticated %}
+{% if user.id == post.author.id %}
+<h1>{{ post.title }}</h1><a href="{% url 'edit-post' post.pk %}">Edit</a><br />
+{% endif %}
+{% endif %}
+
+
+<small>{{ post.author.first_name }} {{ post.author.last_name }}
+    {{ post.post_date}}</small><br />
+<hr>
+
+{% if post.has_images %}
+
+{% for image in image_list %}
+{% if image.post.id == post.id %}
+<img src="{{ image.image.url}}" width="500">
+{% endif %}
+{% endfor %}
+{{ post.imagefiles}}
+{% endif %}
+
+{% if post.video %}
+<video width="500" controls autoplay>
+    <source src="{{post.video.url}}" type="video/mp4">
+</video>
+
+{% endif %}
+<br />
+{% if user.is_authenticated %}
+
+<!-- <span id="like_count" type="hidden">{{ post.like_count}}</span> -->
+<button id="like-button" class="like-button" name="{{ post.like_count }}" value="{{ post.pk }}">LIKED BY
+    {{post.like_count}}</button>
+
+
+{% endif %}
+<form enctype="multipart/form-data" id="id_ajax_upload_form" method="POST" novalidate="">
+    {% csrf_token %}
+    {% for field in form %}
+    {{ field }}<br />
+    {% endfor %}
+
+    {{ imageform.management_form }}
+
+    {% for field in imageform %}
+    {{ field }}
+    {% endfor %}
+    <input type="submit" />
+</form>
+
+<div id="replies-section">
+    {% include 'replies_list.html' %}
+</div>
+
+
+<script>
+    function updateText(btn, no_of_likes) {
+        btn.text("LIKED BY" + " " + no_of_likes)
+    }
+    $(document).on('click', '#like-button', function (e) {
+        e.preventDefault();
+
+        var this_ = $(this)
+        postid = this_.attr("value").valueOf()
+
+
+
+        $.ajax({
+            type: 'POST',
+            url: '{% url "like" %}',
+            data: {
+                postid: postid,
+                // postid: $('#like-button').val(),
+                action: 'post',
+            },
+            success: function (json) {
+                no_of_likes = json['result'];
+                console.log(json)
+                updateText(this_, no_of_likes)
+            },
+            error: function (xhr, errmsg, err) {
+
+            }
+        });
+    })
+
+
+</script>
+
+<script>
+    function updateText(btn, no_of_likes) {
+        btn.text("LIKED BY" + " " + no_of_likes)
+    }
+    function myfunction() {
+
+        let allLikes = document.getElementsByClassName('like-button');
+
+
+        for (let i = 0; i < allLikes.length; i++) {
+            let attributeValue = allLikes[i].getAttribute('value');
+            console.log(typeof allLikes[i])
+            console.log(attributeValue)
+
+            $.ajax({
+                type: 'POST',
+                url: '{% url "set_likes" %}',
+                data: {
+                    postid: attributeValue,
+                    // postid: $('#like-button').val(),
+                    action: 'post',
+                    // postid: '{{ post.pk }}',
+                },
+                success: function (json) {
+                    no_of_likes = json['result'];
+                    //console.log(json)
+                    //updateText(allLikes[i], no_of_likes)
+                    allLikes[i].innerHTML = "LIKED BY" + " " + no_of_likes
+                    console.log("AJAX REQUEST")
+                },
+                error: function (response) {
+
+                }
+            });
+
+
+        }
+        console.log(allLikes)
+
+    }
+
+    const xhr = new XMLHttpRequest()
+    const method = 'GET'
+    const url = "/posts"
+    const responseType = 'json'
+
+    xhr.responseType = responseType
+    xhr.open(method, url)
+    xhr.onload = function () {
+        var listedItems = xhr.response.response
+        console.log(listedItems)
+    }
+</script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script type="text/javascript">
+    // form upload
+    $('#id_ajax_upload_form').submit(function (e) {
+        e.preventDefault();
+        $form = $(this)
+        var formData = new FormData(this);
+        $.ajax({
+            url: window.location.pathname,
+            type: 'POST',
+            data: formData,
+            success: function (response) {
+                //alert("JKJJK")
+                $("#replies-section").html(response['replies_list']);
+                $("#id_title").val('');
+                $("#id_body").val('');
+                $("#id_image").val('');
+                //console.log($("#id_image").val())
+                //$("#id_category").val('');
+            },
+            cache: false,
+            contentType: false,
+            processData: false
+        });
+    });
+    // end
+</script>
+
+{% endblock content %}

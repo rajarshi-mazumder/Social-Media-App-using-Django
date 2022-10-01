@@ -1,0 +1,143 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+
+
+
+
+
+
+
+<br />
+
+<h3>Replies</h3>
+
+{% if replies_to_post %}
+
+
+{% for reply in replies_to_post %}
+<a href="{% url 'post-page' reply.pk %}">{{ reply.title }} </a>
+{{ reply.author}}
+<br />
+{{ reply.body|safe}}
+
+<br />
+
+{% if reply.has_images %}
+
+{% for image in image_list %}
+{% if image.post.id == reply.id %}
+<img src="{{ image.image.url}}" width="500">
+{% endif %}
+{% endfor %}
+
+
+{% endif %}
+<button id="like-button" class="like-button" name="{{ reply.like_count }}" value="{{ reply.pk }}">LIKED BY
+    {{reply.like_count}}</button>
+
+<a href="{% url 'add-reply' reply.pk %}">Text Reply</a>
+<!-- <a href="{% url 'add-image-reply' reply.pk %}">Image Reply</a> -->
+<!-- <a href="{% url 'add-video-reply' reply.pk %}">Video Reply</a> -->
+
+<hr>
+{% endfor %}
+{% endif %}
+
+<br /><br />
+
+<br />
+
+<button onclick="history.go(-1)">Back</button>
+<!-- <a href="{% url 'home-page'  %}">Back</a> -->
+
+
+<script>
+    function updateText(btn, no_of_likes) {
+        btn.text("LIKED BY" + " " + no_of_likes)
+    }
+    $(document).on('click', '#like-button', function (e) {
+        e.preventDefault();
+
+        var this_ = $(this)
+        postid = this_.attr("value").valueOf()
+
+        $.ajax({
+            type: 'POST',
+            url: '{% url "like" %}',
+            data: {
+                postid: postid,
+                // postid: $('#like-button').val(),
+                action: 'post',
+            },
+            success: function (json) {
+                no_of_likes = json['result'];
+                console.log(json)
+                updateText(this_, no_of_likes)
+            },
+            error: function (xhr, errmsg, err) {
+
+            }
+        });
+    })
+
+
+</script>
+
+
+<script>
+    function updateText(btn, no_of_likes) {
+        btn.text("LIKED BY" + " " + no_of_likes)
+    }
+    function myfunction() {
+
+        let allLikes = document.getElementsByClassName('like-button');
+
+
+        for (let i = 0; i < allLikes.length; i++) {
+            let attributeValue = allLikes[i].getAttribute('value');
+            console.log(typeof allLikes[i])
+            console.log(attributeValue)
+
+            $.ajax({
+                type: 'POST',
+                url: '{% url "set_likes" %}',
+                data: {
+                    postid: attributeValue,
+                    // postid: $('#like-button').val(),
+                    action: 'post',
+                    // postid: '{{ post.pk }}',
+                },
+                success: function (json) {
+
+                    // this.getElementById("like-button").innerHTML = json['result']
+                    // document.getElementsByTagName('{{post.id}}').innerHTML = json['result']
+
+                    // document.getElementById("like_count").innerHTML = json['result'];
+                    // no_of_likes = this_.attr("name").valueOf();
+
+
+                    no_of_likes = json['result'];
+                    //console.log(json)
+                    //updateText(allLikes[i], no_of_likes)
+                    allLikes[i].innerHTML = "LIKED BY" + " " + no_of_likes
+                    console.log("AJAX REQUEST")
+                },
+                error: function (response) {
+
+                }
+            });
+
+
+        }
+        console.log(allLikes)
+
+    }
+
+
+</script>
+
+
+{% endblock content %}
