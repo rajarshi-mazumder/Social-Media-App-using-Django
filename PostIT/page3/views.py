@@ -24,7 +24,7 @@ from . forms import EditPostForm, EditVideoPostForm, ImageForm, PostForm, PostIm
 from django.http import HttpResponseRedirect
 from django.urls import reverse, reverse_lazy
 from django.contrib.auth.decorators import login_required
-from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from django.template.loader import render_to_string
 # Create your views here.
 # Paginator stuff
@@ -974,10 +974,29 @@ def deletePost(request, pk):
     return Response('Post was deleted!')
 
 def posts_by_user(request, user):
-    user= User.objects.get(username=user)
-    posts= Post.objects.filter(author= user)
-    context={'posts':posts}
-    return render(request, 'posts_by_user.html', context)
+    if(user!='favicon.png'):
+        user= User.objects.get(username=user)
+        posts= Post.objects.filter(author= user)
+        profile= Profile.objects.filter(user=user)[0]
+        print("Profile of: ",profile.followers.count())
+        
+        context={'posts':posts, 'profile_owner':user, 'profile': profile}
+        return render(request, 'posts_by_user.html', context)
+    return render(request, 'posts_by_user.html')
+
+
+@api_view(['GET','POST'])
+def start_following(request, who_to_follow):
+    # print(who_to_follow, request.POST['user'])
+    
+    profile= Profile.objects.filter(user= User.objects.get(username=request.POST['user']).id)
+    profile[0].following.add(User.objects.get(username=who_to_follow))
+    
+
+    profile_followed= Profile.objects.filter(user= User.objects.get(username= who_to_follow))
+    profile_followed[0].followers.add(User.objects.get(username=request.POST['user']))
+    print(profile_followed, request.POST['user'])
+    return Response(who_to_follow)
 
 def create_game_profile(request, user):
     form = GameProfileForm()

@@ -90,6 +90,8 @@ class Profile(models.Model):
         null=True, blank=True, upload_to="images/profile")
     discord_link = models.CharField(max_length=255, null=True, blank=True)
     twitch_link = models.CharField(max_length=255, null=True, blank=True)
+    following= models.ManyToManyField(User, default=None, blank= True, related_name='following')
+    followers= models.ManyToManyField(User, default=None, blank= True, related_name='followers')
 
     def __str__(self):
         return str(self.user)

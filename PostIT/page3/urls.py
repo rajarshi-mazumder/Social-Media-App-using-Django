@@ -54,5 +54,6 @@ urlpatterns = [
     path('matchmaking/<str:user>', views.MatchmakingHome, name="matchmaking-home"),
     path('matchmaking_data/<str:user>', views.Matchmaking_Data, name="matchmaking-data"),
 
-    path('getgamerank_server/<str:game>', views.get_game_rank_server, name="get-game-rank-server")
+    path('getgamerank_server/<str:game>', views.get_game_rank_server, name="get-game-rank-server"),
+    path('start_following/<str:who_to_follow>', views.start_following, name="start-following"),
 ]
