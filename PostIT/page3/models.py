@@ -72,8 +72,7 @@ class Post(models.Model):
         return self.likes.count()
 
     def save(self, *args, **kwargs):
-        self.tags = self.category.replace(' ', '-').lower()
-        # self.tags= self.tags.split(',')
+        # self.tags = self.category.replace(' ', '-').lower()
         super(Post, self).save(*args, **kwargs)
 
     def __str__(self):

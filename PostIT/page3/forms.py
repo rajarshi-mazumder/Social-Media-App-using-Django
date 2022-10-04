@@ -35,11 +35,12 @@ class PostImageForm(ModelForm):
     class Meta:
         model = Post
         # fields = '__all__'
-        fields = ('title', 'body', 'category')
+        fields = ('title', 'body', 'category', 'tags')
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Title'}),
             'category': forms.Select(choices=choice_list, attrs={'class': 'form-control'}),
-            'body': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Write something here...'})
+            'body': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Write something here...'}),
+            'tags': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'eg- #LFT, #Valo, #Valorant'})
         }
 
 
@@ -47,13 +48,14 @@ class PostVideoForm(ModelForm):
     class Meta:
         model = Post
         # fields = '__all__'
-        fields = ('title', 'body', 'category', 'video')
+        fields = ('title', 'body', 'category', 'video', 'tags')
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Title'}),
             # 'author': forms.TextInput(attrs={'class': 'form-control', 'value': '', 'id': 'author-name', 'type': 'hidden'}),
             # 'author': forms.Select(attrs={'class': 'form-control'}),
             'category': forms.Select(choices=choice_list, attrs={'class': 'form-control'}),
-            'body': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Write something here...'})
+            'body': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Write something here...'}),
+            'tags': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'eg- #LFT, #Valo, #Valorant'})
         }
 
 

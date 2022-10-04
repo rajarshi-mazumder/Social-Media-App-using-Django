@@ -367,7 +367,7 @@ def add_post(request):
         'form': form
     }
     if request.method == 'POST':
-        print("ADD POST POSTED")
+        
         form = PostForm(request.POST, request.FILES)
         # if form.is_valid():
             
@@ -384,7 +384,7 @@ def add_post(request):
         tags_arr=[]
         if len(tags)>0:
             tags_list= tags.split(",")
-            print("tags are:",request.POST['tags'])
+            
             for t in tags_list:
                 if not(Tags.objects.filter(tag_name=t).exists()):
                     new_tag= Tags(tag_name= t)
@@ -420,15 +420,33 @@ def add_image_post(request):
         print(request.POST)
         form = PostImageForm(request.POST)
         files = request.FILES.getlist("image")
+
+        tags= request.POST['tags']
+        
+
         if form.is_valid():
             # form.save()
+            
+                       
             instance = form.save(commit=False)
             instance.author = request.user
             if files:
                 instance.has_images = True
             else:
                 instance.has_images = False
+            
             instance.save()
+            if len(tags)>0:
+                tags_list= tags.split(",")
+
+                for t in tags_list:
+                    if not(Tags.objects.filter(tag_name=t).exists()):
+                        new_tag= Tags(tag_name= t)
+                        new_tag.save()
+                        Tags.objects.get(id=new_tag.id).post.add(Post.objects.get(id=instance.id))
+                        
+                    else:
+                        Tags.objects.filter(tag_name=t).post.add(Post.objects.get(id=instance.id))
 
             for file in files:
                 ImageFiles.objects.create(post=instance, image=file)
@@ -451,6 +469,8 @@ def add_video_post(request):
     if request.method == 'POST':
         print(request.POST)
         form = PostVideoForm(request.POST, request.FILES)
+        tags= request.POST['tags']
+
         if form.is_valid():
             # form.save()
             instance = form.save(commit=False)
@@ -458,7 +478,17 @@ def add_video_post(request):
             if request.FILES:
                 instance.has_video = True
             instance.save()
+            if len(tags)>0:
+                tags_list= tags.split(",")
 
+                for t in tags_list:
+                    if not(Tags.objects.filter(tag_name=t).exists()):
+                        new_tag= Tags(tag_name= t)
+                        new_tag.save()
+                        Tags.objects.get(id=new_tag.id).post.add(Post.objects.get(id=instance.id))
+                        
+                    else:
+                        Tags.objects.filter(tag_name=t).post.add(Post.objects.get(id=instance.id))
             return redirect('home-page')
         else:
             return render(request, 'add_video_post.html', context)
