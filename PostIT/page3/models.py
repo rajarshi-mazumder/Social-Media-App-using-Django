@@ -4,11 +4,14 @@ from random import choices
 from secrets import choice
 from django.db import models
 from django.contrib.auth.models import User
+from django.forms import CharField
 from django.urls import reverse
 from django.core.validators import int_list_validator
 from django.contrib.postgres.fields import ArrayField
 from datetime import datetime, date
 from ckeditor.fields import RichTextField
+from pyparsing import null_debug_action
+# from spacy import blank
 
 
 # Create your models here.
@@ -29,6 +32,7 @@ class Category(models.Model):
         return reverse('home-page')
 
 
+
 class Post(models.Model):
     title = models.CharField(max_length=255, blank=True, null=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE, default=None)
@@ -39,8 +43,11 @@ class Post(models.Model):
     post_date = models.DateField(auto_now_add=True)
     post_datetime = models.DateTimeField(auto_now_add=True)
     category = models.CharField(max_length=50, default='none')
+
     tags = models.CharField(
-        max_length=255, default='none')
+        max_length=255, default='')
+    # tags= models.ManyToManyField(Tags, default= None, blank= True, related_name='posts_w_tag')
+
     likes = models.ManyToManyField(
         User, default=None, blank=True, related_name='posts')
     like_count = models.BigIntegerField(default='0')
@@ -66,14 +73,21 @@ class Post(models.Model):
 
     def save(self, *args, **kwargs):
         self.tags = self.category.replace(' ', '-').lower()
+        # self.tags= self.tags.split(',')
         super(Post, self).save(*args, **kwargs)
 
     def __str__(self):
-        return self.body + ' | ' + str(self.author) + '| ' + str(self.id)
+        return self.body + ' | ' + str(self.author) + '| ' + str(self.id) 
 
     def get_absolute_url(self):
         return reverse('post-page', args=(str(self.post_id)))
 
+class Tags(models.Model):
+    tag_name= models.CharField(max_length=50, null=True)    
+    post= models.ManyToManyField(Post, default=None, blank=True, related_name='tagged_posts')
+    
+    def __str__(self):
+        return self.tag_name
 
 class Replies(models.Model):
     reply_to = models.IntegerField(null=True, blank=True, default=-1)
@@ -191,3 +205,4 @@ class GameProfile(models.Model):
 
     def __str__(self):
         return str(self.user)+ " | " + str(self.game) + " | " + str(self.server) + " | " + str(self.rank)
+

@@ -19,7 +19,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, JsonResponse, HttpResponseNotAllowed
 from django.views.generic import ListView, DetailView
 from matplotlib.style import context
-from . models import GameProfile, Post, Replies, ImageFiles, Profile
+from . models import GameProfile, Post, Replies, ImageFiles, Profile, Tags
 from . forms import EditPostForm, EditVideoPostForm, ImageForm, PostForm, PostImageForm, PostVideoForm, EditImagePostForm, GameProfileForm, MatchmakingForm
 from django.http import HttpResponseRedirect
 from django.urls import reverse, reverse_lazy
@@ -63,6 +63,7 @@ def home_timeline(request, post_id=None):
 
     object_list = Post.objects.all().order_by('-post_datetime')
     game_profiles= GameProfile.objects.all()
+    tags= Tags.objects.all()
     try:
         print(request.session['post_in_view'])
     except:
@@ -106,6 +107,7 @@ def home_timeline(request, post_id=None):
             'has_images_to_show': has_images_to_show,
             'profiles': profiles,
             'game_profiles': game_profiles,
+            'tags':tags,
         }
     return render(request, 'home_timeline.html', context)
 
@@ -359,22 +361,50 @@ def return_post_data(request, post_id):
 
 
 def add_post(request):
+    
     form = PostForm()
     context = {
         'form': form
     }
     if request.method == 'POST':
-        print(request.POST)
+        print("ADD POST POSTED")
         form = PostForm(request.POST, request.FILES)
-        if form.is_valid():
+        # if form.is_valid():
+            
             # form.save()
-            instance = form.save(commit=False)
-            instance.author = request.user
-            instance.save()
+        
+        title= request.POST['title']
+        body= request.POST['body']
+        category= request.POST['category']
+        tags= request.POST['tags']
 
-            return redirect('home-page')
-        else:
-            return render(request, 'add_post.html', context)
+        new_post= Post(author= request.user,title=title, body=body, category= category)
+        new_post.save()
+        
+        tags_arr=[]
+        if len(tags)>0:
+            tags_list= tags.split(",")
+            print("tags are:",request.POST['tags'])
+            for t in tags_list:
+                if not(Tags.objects.filter(tag_name=t).exists()):
+                    new_tag= Tags(tag_name= t)
+                    new_tag.save()
+                    Tags.objects.get(id=new_tag.id).post.add(Post.objects.get(id=new_post.id))
+                    
+                else:
+                    Tags.objects.filter(tag_name=t).post.add(Post.objects.get(id=new_post.id))
+            
+
+        
+        
+        print(new_post.id)
+            # instance = form.save(commit=False)
+            # instance.author = request.user
+            # instance.save()
+
+        #     return redirect('home-page')
+        # else:
+        #     return render(request, 'add_post.html', context)
     else:
         form = PostForm()
 
@@ -914,7 +944,7 @@ def serializeReplies(replies_to_post, image_list):
 
 
 def category(request, cat):
-    catrgory_posts = Post.objects.filter(tags=cat)
+    catrgory_posts = Post.objects.filter(category=cat)
     context = {
         'cat': cat.title().replace('-', ' '),
         'catrgory_posts': catrgory_posts

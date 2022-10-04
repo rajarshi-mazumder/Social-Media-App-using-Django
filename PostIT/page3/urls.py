@@ -22,7 +22,11 @@ urlpatterns = [
     path('post/edit_video/<int:post_id>',
          views.edit_video_post, name='edit-video-post'),
     path('post/delete/<int:post_id>', views.delete_post, name='delete-post'),
+    
+   
     path('category/<str:cat>/', views.category, name='posts-by-category'),
+    
+    
     # path('like/', views.like_post, name='like-post'),
     # path('like/<int:pk>', views.like_post_details, name='like-post-details'),
     path('like/', views.like, name='like'),

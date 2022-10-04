@@ -63,7 +63,8 @@ Page3 Homepage
                                     <div>
                                         <div class="post-category-section">
                                             <i class="fa-solid fa-earth-oceania"></i>
-                                            <a class="post-category" href="{% url 'posts-by-category' post.tags %}">
+                                            
+                                            <a class="post-category" href="{% url 'posts-by-category' post.category%}">
                                                 {{post.category}}</a> <small>
                                                 {{post.id}}</small>
                                         </div>
@@ -82,7 +83,7 @@ Page3 Homepage
                                         <a class="post-title" onclick="storeScroll()"
                                             href="{% url 'post-page' post.pk %}">
                                             {{post.title}}</a>
-
+                                            
 
                                         {% if user.is_authenticated %}
                                         {% if user.id == post.author.id %}
@@ -100,7 +101,16 @@ Page3 Homepage
                                         {% endif %}
                                         <hr>
                                         <div id="show-popup" value="{{ post.id }}" class="post-body">
-                                            {{ post.body|safe}}
+                                            {{ post.body|safe}} 
+                                            {%for t in tags%}
+                                                   {%for p in t.post.all%}
+                                                        {%if p.id == post.id%}
+                                                            {{t.tag_name}}
+                                                        {%endif%}
+                                                   {%endfor%}
+                                                    
+                                                
+                                            {%endfor%}
                                         </div>
 
                                         {% if post.image1 %}
