@@ -383,7 +383,7 @@ def add_post(request):
         
         tags_arr=[]
         if len(tags)>0:
-            tags_list= tags.split(",")
+            tags_list= tags.replace(' ','').split(",")
             
 
             for t in tags_list:
@@ -394,7 +394,7 @@ def add_post(request):
                     
 
                 else:
-                    Tags.objects.filter(tag_name=t).post.add(Post.objects.get(id=new_post.id))
+                    Tags.objects.get(tag_name=t).post.add(Post.objects.get(id=new_post.id))
             
             new_post.set_Tag(tags_list)
             new_post.save()
@@ -420,7 +420,7 @@ def add_image_post(request):
         'form': form
     }
     if request.method == 'POST':
-        print(request.POST)
+        
         form = PostImageForm(request.POST)
         files = request.FILES.getlist("image")
 
@@ -440,15 +440,17 @@ def add_image_post(request):
             
             instance.save()
             if len(tags)>0:
-                tags_list= tags.split(",")
+                tags_list= tags.replace(' ','').split(",")
 
                 for t in tags_list:
                     if not(Tags.objects.filter(tag_name=t).exists()):
+                        
                         new_tag= Tags(tag_name= t)
                         new_tag.save()
                         Tags.objects.get(id=new_tag.id).post.add(Post.objects.get(id=instance.id))
                         
                     else:
+                        print("MATCHED: ",Tags.objects.filter(tag_name=t))
                         Tags.objects.get(tag_name=t).post.add(Post.objects.get(id=instance.id))
                 
                 post_obj= Post.objects.get(id=instance.id)
@@ -486,7 +488,7 @@ def add_video_post(request):
                 instance.has_video = True
             instance.save()
             if len(tags)>0:
-                tags_list= tags.split(",")
+                tags_list= tags.replace(' ','').split(",")
 
                 for t in tags_list:
                     if not(Tags.objects.filter(tag_name=t).exists()):

@@ -61,7 +61,9 @@ class Post(models.Model):
         self.tags=json.dumps(lst)
     
     def get_Tag(self):
-        return json.loads(self.tags)
+        if self.tags:
+            tag_list= json.loads(self.tags)
+            return tag_list
 
     def liked_by(self):
         likers = []

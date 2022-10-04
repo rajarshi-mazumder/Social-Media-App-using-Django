@@ -102,14 +102,8 @@ Page3 Homepage
                                         <hr>
                                         <div id="show-popup" value="{{ post.id }}" class="post-body">
                                             {{ post.body|safe}} 
-                                            {%for t in tags%}
-                                                   {%for p in t.post.all%}
-                                                        {%if p.id == post.id%}
-                                                            {{t.tag_name}}
-                                                        {%endif%}
-                                                   {%endfor%}
-                                                    
-                                                
+                                            {%for t in post.get_Tag%}
+                                                {{t}}
                                             {%endfor%}
                                         </div>
 
