@@ -385,16 +385,19 @@ def add_post(request):
         if len(tags)>0:
             tags_list= tags.split(",")
             
+
             for t in tags_list:
                 if not(Tags.objects.filter(tag_name=t).exists()):
                     new_tag= Tags(tag_name= t)
                     new_tag.save()
                     Tags.objects.get(id=new_tag.id).post.add(Post.objects.get(id=new_post.id))
                     
+
                 else:
                     Tags.objects.filter(tag_name=t).post.add(Post.objects.get(id=new_post.id))
             
-
+            new_post.set_Tag(tags_list)
+            new_post.save()
         
         
         print(new_post.id)
@@ -446,7 +449,11 @@ def add_image_post(request):
                         Tags.objects.get(id=new_tag.id).post.add(Post.objects.get(id=instance.id))
                         
                     else:
-                        Tags.objects.filter(tag_name=t).post.add(Post.objects.get(id=instance.id))
+                        Tags.objects.get(tag_name=t).post.add(Post.objects.get(id=instance.id))
+                
+                post_obj= Post.objects.get(id=instance.id)
+                post_obj.set_Tag(tags_list)
+                post_obj.save()
 
             for file in files:
                 ImageFiles.objects.create(post=instance, image=file)
@@ -488,7 +495,12 @@ def add_video_post(request):
                         Tags.objects.get(id=new_tag.id).post.add(Post.objects.get(id=instance.id))
                         
                     else:
-                        Tags.objects.filter(tag_name=t).post.add(Post.objects.get(id=instance.id))
+                        Tags.objects.get(tag_name=t).post.add(Post.objects.get(id=instance.id))
+                
+                post_obj= Post.objects.get(id=instance.id)
+                post_obj.set_Tag(tags_list)
+                post_obj.save()
+
             return redirect('home-page')
         else:
             return render(request, 'add_video_post.html', context)

@@ -1,5 +1,6 @@
 
 from email.policy import default
+import json
 from random import choices
 from secrets import choice
 from django.db import models
@@ -10,6 +11,7 @@ from django.core.validators import int_list_validator
 from django.contrib.postgres.fields import ArrayField
 from datetime import datetime, date
 from ckeditor.fields import RichTextField
+from matplotlib.pyplot import cla
 from pyparsing import null_debug_action
 # from spacy import blank
 
@@ -45,7 +47,7 @@ class Post(models.Model):
     category = models.CharField(max_length=50, default='none')
 
     tags = models.CharField(
-        max_length=255, default='')
+        max_length=255, default='', blank=True)
     # tags= models.ManyToManyField(Tags, default= None, blank= True, related_name='posts_w_tag')
 
     likes = models.ManyToManyField(
@@ -54,6 +56,12 @@ class Post(models.Model):
     video = models.FileField(null=True, blank=True, upload_to="videos/")
     has_images = models.BooleanField(null=True, blank=True, default=False)
     has_video = models.BooleanField(null=True, blank=True, default=False)
+
+    def set_Tag(self, lst):
+        self.tags=json.dumps(lst)
+    
+    def get_Tag(self):
+        return json.loads(self.tags)
 
     def liked_by(self):
         likers = []
@@ -87,6 +95,8 @@ class Tags(models.Model):
     
     def __str__(self):
         return self.tag_name
+
+
 
 class Replies(models.Model):
     reply_to = models.IntegerField(null=True, blank=True, default=-1)
