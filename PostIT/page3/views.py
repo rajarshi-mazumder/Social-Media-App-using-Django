@@ -1173,3 +1173,8 @@ def get_game_rank_server(request, game):
     
     return JsonResponse({"ranks":ranks, "servers":servers})
 
+
+def search_results(request):
+    if request.method=='POST':
+        print( request.POST['search_query'] )
+        return render(request,'search_results.html')

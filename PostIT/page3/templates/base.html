@@ -47,7 +47,13 @@
 
                 {% if user.profile.id %}
 
-
+                <div class="search-bar">
+                    <form action="{% url 'search'  %}" method="POST" enctype="multipart/form-data" id="search-form">
+                        {% csrf_token %}
+                        <input name="search_query" type="text" placeholder="Search something ">
+                        <button id="search_btn" type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
+                    </form>
+                </div>
                 <div class="profile">
 
                     <div class="submenu">
@@ -70,7 +76,7 @@
 
                 <a href="{% url 'edit-profile' %}"><i class="fa-solid fa-gear "></i></a>
             </div>
-
+           
             {% if user.is_authenticated %}
             <div class="add-post">
                 <i class="fa-solid fa-circle-plus fa-3x"></i>
@@ -100,4 +106,15 @@
         {% endblock content %}
     </body>
 
+    <script src="{% static 'PostIT/js/jquery.waypoints.min.js' %}"></script>
+    <script src="{% static 'PostIT/js/infinite.min.js'%}"></script>
+    
+    <script>
+        $(document).on('submit', '#search-form', function(e) {
+            console.log($('.seach_query').val())
+            $.ajax({
+                
+            })
+        } )
+    </script>
 </html>

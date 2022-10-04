@@ -60,4 +60,5 @@ urlpatterns = [
 
     path('getgamerank_server/<str:game>', views.get_game_rank_server, name="get-game-rank-server"),
     path('start_following/<str:who_to_follow>', views.start_following, name="start-following"),
+    path('search', views.search_results, name='search')
 ]
