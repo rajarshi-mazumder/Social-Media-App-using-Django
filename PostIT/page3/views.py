@@ -36,6 +36,7 @@ from django.core import serializers
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from itertools import chain
+import re
 
 # def home(request):
 #     object_list = Post.objects.all().order_by('-post_datetime')
@@ -1175,6 +1176,38 @@ def get_game_rank_server(request, game):
 
 
 def search_results(request):
+    
     if request.method=='POST':
-        print( request.POST['search_query'] )
-        return render(request,'search_results.html')
+        og_search_query= request.POST['search_query']
+        search_query= request.POST['search_query'].lower().replace(' ','')
+        posts_list=[]
+        people_list=[]
+        all_posts= Post.objects.all().order_by('-post_datetime')
+        all_profiles=Profile.objects.all()
+        profiles=Profile.objects.all()
+        image_list = ImageFiles.objects.all()
+
+        for p in all_posts:
+            if p.body.lower().find(search_query)!=-1:
+                posts_list.append(p)
+                
+            elif len( p.tags)>0: 
+                for t in p.get_Tag():
+                    if t.lower().find(search_query)!=-1:
+                        posts_list.append(p)
+            elif str( p.category).lower().replace(' ','').find(search_query)!=-1:
+                posts_list.append(p)
+            if p.author.username.find(search_query)!=-1:
+                posts_list.append(p)
+            
+        for pr in all_profiles:
+            if pr.user.username.find(search_query)!=-1:
+                people_list.append(pr)
+            
+                    
+        print(posts_list)
+        
+        return render(request,'search_results.html', context={'posts_list': posts_list,
+                                                                'search_query': og_search_query, 'profiles':profiles,
+                                                                'people_list':people_list, 'image_list':image_list})
+    return render(request,'search_results.html')

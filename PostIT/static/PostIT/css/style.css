@@ -408,3 +408,25 @@ button{
     visibility: hidden;
 }
 /* User Posts Page */
+
+/* Search Results Page */
+.button-section{
+    margin-top: 40px;
+}
+.button-section button{
+    margin:0 20px;
+    padding: 10px 20px;
+    width: 140px;
+    background-color: var(--post_bg_color);
+    border: #444 solid 1px;
+    border-radius: 5px;
+}
+#people-list .profile-pic{
+    display: flex;
+    align-items: center;
+}
+
+#people-list .profile-pic .username{
+    padding: 10px;
+}
+/* Search Results Page */
